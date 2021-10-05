@@ -1,0 +1,38 @@
+---
+title: "Milestone 1"
+output: pdf_document
+---
+**Task 1: Choose your favourite dataset**
+ 1) vancouver_trees
+ 2) flow_sample
+ 3) cancer_sample
+ 4) building_permits
+ 
+*Narrowing down my selection:*
+1) vancouver_trees
+```{r}
+summarise(vancouver_trees)
+select(vancouver_trees, everything())
+class(vancouver_trees)
+```
+2) flow_sample
+```{r}
+summarise(flow_sample)
+select(flow_sample, everything())
+class(flow_sample)
+```
+3) cancer_sample
+```{r}
+summarise(cancer_sample)
+select(cancer_sample, everything())
+class(cancer_sample)
+```
+4)building_permits
+summarise(building_permits)
+select(building_permits, everything())
+class(building_permits)
+
+*My selection:*
+My top two choices are 'flow_sample' and 'vancouver_trees'. In hindsight, 'flow_sample' will be an excellent data set to work with as there is some relevance to my own research. My second choice will be'vancouver_trees' due to my longstanding interest in plant biology. Therefore, I will be working with 'flow_sample' due to the relevance with my own research. I will aim to examine changes in flow through time. 
+
+
