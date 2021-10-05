@@ -11,8 +11,8 @@ output: pdf_document
 *Narrowing down my selection:*
 1) vancouver_trees
 ```{r}
-summarise(vancouver_trees)
-select(vancouver_trees, everything())
+dplyr::summarise(vancouver_trees)
+dplyr::select(vancouver_trees, everything())
 class(vancouver_trees)
 ```
 2) flow_sample
