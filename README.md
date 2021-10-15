@@ -8,7 +8,8 @@
  | File | Description |
 | ---  | ---         |
 | `README.md`           | Project introduction & how-to instructions |
-|`Milestone 1.Rmd`      | Description data used during the project   |
+|`Milestone 1`          | Description data used during the project   |
+|`Milestone 2`          | Organization and visualization of data     |
 
 ## Authors
   - [John Gray](https://github.com/jgray180)
