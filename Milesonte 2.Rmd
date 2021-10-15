@@ -1,0 +1,156 @@
+---
+title: "Milestone 2.md"
+author: "John Gray"
+output: pdf_document
+---
+```{r,include=FALSE,echo = FALSE, results='hide'}
+library(datateachr)
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(readr)
+fish_sampling<-read_csv("fish_sampling.csv")
+```
+
+# Task 1: Process and summarize your data 
+
+## Task 1.1-1.2:
+  *1. How do populations of fish differ between Pepin Creek and Bertrand Creek?*
+    *First I computed the number of sampled fish of each species within each creek and then I represented this data using a plot with two "geom_'x'" functions. 
+```{r}
+fish_sampling%>%
+  group_by(system,species)%>%
+  tally()%>%
+  ggplot(aes(system,n))+
+  geom_boxplot()+
+  geom_dotplot(binaxis = 'y',dotsize=1,stackdir='center',aes(fill=species))+
+  labs(y="Species Abundance",x="System", title = "Fish species abundnance within Bertrand and Pepin Creek")
+```
+  *2. How does the weight of the fish differ between Pepin Creek and Bertrand Creek?*
+    *Compute the mean, standard deviation, median, variance, and range of fish species weights collected in Pepin Creek and Bertrand Creek I then plotted the weight the different species in Pepin Creek and Bertrand Creek, where I had to edit the alpha transparency. 
+
+```{r}
+fish_sampling%>%
+  transform(weight_g=as.numeric(weight_g))%>%
+  group_by(system, species)%>%
+  summarize(species_mean_weight=mean(weight_g,na.rm=TRUE),
+            species_weight_SD=sd(weight_g,na.rm=TRUE),
+            species_median_weight=median(weight_g,na.rm=TRUE),
+            species_weight_variance=var(weight_g,na.rm=TRUE),
+            species_weight_range=range(weight_g,na.rm=TRUE))
+
+fish_sampling%>%
+  arrange(species)%>%
+  ggplot(aes(species,weight_g))+
+  geom_jitter(alpha=0.2,aes(color=system))+
+  scale_x_discrete(labels=c("CO"="Coho", "CRAYFISH"="Crayfish","CUT"="Cutthroat","RBT"="Steelhead", "LAMP"= "Lamprey","STK"="Stickleback","DAC"="Dace"))+
+  scale_y_discrete(breaks = seq(from =0,to = max(fish_sampling$weight_g),by=0.5),expand=c(0,0))+
+  coord_cartesian(clip = "off")+
+  ylab("Weight (g)")+
+  xlab("Species")
+```
+
+  *3. How does the length to weight ratio differ between species?*
+    *Compute the mean, standard deviation, median, variance, and range of fish species length to weight ratio collected in Pepin Creek and Bertrand Creek I then plotted the length to weight ratio of the different species in Pepin Creek and Bertrand Creek, where I had to edit the alpha transparency. 
+```{r}
+fish_sampling%>%
+  transform(weight_g=as.numeric(weight_g),length_cm=as.numeric(length_cm))%>%
+  mutate(length_weight_ratio=length_cm/weight_g)%>%
+  group_by(species)%>%
+  summarize(species_mean_length_weight_ratio=mean(length_weight_ratio,na.rm=TRUE),
+            species_length_weight_ratio_SD=sd(weight_g,na.rm=TRUE),
+            species_median_length_weight_ratio=median(length_weight_ratio,na.rm=TRUE),
+            species_length_weight_ratio_variance=var(length_weight_ratio,na.rm=TRUE),
+            species_length_weight_ratio_range=range(length_weight_ratio,na.rm=TRUE))
+
+fish_sampling%>%
+  transform(weight_g=as.numeric(weight_g),length_cm=as.numeric(length_cm))%>%
+  mutate(length_weight_ratio=length_cm/weight_g)%>%
+  ggplot(aes(species,length_weight_ratio))+
+  geom_jitter(alpha=0.4,width=0.3,aes(color=system))+
+  scale_y_log10()+
+  labs(y="Fish Length to Weight Ratio",x="Species", title = "The length to weight ratio of fish species within Bertrand and Pepin Creek")+
+  scale_x_discrete(labels=c("CO"="Coho", "CRAYFISH"="Crayfish","CUT"="Cutthroat","RBT"="Steelhead", "LAMP"= "Lamprey","STK"="Stickleback","DAC"="Dace","TROUT"="Trout sp."))
+```
+
+  *4. Is there a difference in fish abundance between riffles (i.e. sampling sites)?*
+    * First I computed the number of sampled fish of each species, within each riffle, in each creek and then I represented this data using a plot with two "geom_'x'" functions.
+    
+```{r}
+fish_sampling%>%
+  group_by(system,riffle,species)%>%
+  tally()%>%
+  ggplot(aes(riffle,species))+
+  ggridges::geom_density_ridges()+
+  geom_point()
+
+fish_sampling
+```
+## Task 1.3:
+ As can be seen in the displayed data summaries and plots, I now have a better numerical and visual observation of the collected data. Visually, I believe I am able to see some trends in the data however, I now need to approach the data statistically to assess whether these trends I notice are statistically significant. However, I am content with my research questions as they are. Though they are generic, I feel that they incorporate some aspects of the streams fish ecology that needs to be assessed so they can be related to different abiotic factors of the streams. 
+ 
+# Task 2: Tidy the data
+
+## Task 2.1:
+ Based on the definition of "Tidy Data", I am under the impression that my data is "tidy". Each column, except for the "comments" column, is a variable, each row is one collected observation and each of the cells represent a value derived from the observation of a particular variable. 
+
+**System** - is tidy. It represents a variable which describes system (i.e. Pepin Creek or Bertrand Creek) the sample was taken in.  Therefore, each row is an observation, as Pepin or Bertrand, within the column describes where the data was observed; collected. Each entry in this column is a value. 
+
+**Riffle** - is tidy. It represents a variable which describes at which sampling site (i.e. riffle) the data was collected. Therefore, each row is an observation describing at which riffle the data was collected and each value is a value represents at which riffle in which system the data was collected in. 
+
+**Pass** - is tidy. It represents a variable which describes how the data was collected in. Each observation describes at which electroshocking pass the data was collected, at which row and in which system. Therefore, each value describes how the data was collected and in what pass. 
+
+**Species** - is tidy. It represents a variable which describes the fish that were collected. Each observation indicates which species were caught in which pass, at which riffle, in which system. Therefore, the value indicates the species. 
+
+**Weight_g** - is tidy. It represents a variable that describes the weight of a collected fish. Each observation describes the size of a sampled fish, the species, which pass it was collected on, at which riffle and in which system. Therefore, the value represents the size of a specimen, where it was caught and how it was caught. 
+
+**Length_cm** - is tidy. It represents a variable that describes the length of a collected fish. Each observation describes the size of a sampled fish, the species, which pass it was collected on, at which riffle and in which system. Therefore, the value represents the length of a specimen, where it was caught and how it was caught. 
+
+**Date** - is tidy. It represents a variable that describes when a fish was collected. Each observation describes when a fish was collected, its species, which pass it was collected on, at which riffle and in which system. Therefore, the value indicates when a specimen was collected, where it was caught and how it was caught. 
+
+**Sampled Riffle Length** - is tidy. It represents a variable that describes how long the riffle is that was sampled to provide an indicator of fish per unit area. Each observation describes how long the was, when a fish was collected, its species, which pass it was collected on, at which riffle and in which system. Therefore, the value indicates the length of the sampling site when a specimen was collected, where it was caught and how it was caught
+
+## Task 2.2:
+**Un-tidying my data:**
+```{r,include=FALSE,echo = FALSE, results='hide'}
+more_fish_sampling<-fish_sampling%>%
+  transform(weight_g=as.numeric(weight_g),length_cm=as.numeric(length_cm))%>%
+  mutate(length_weight_ratio=length_cm/weight_g)%>%
+  subset(select=-c(shocking_effort_s,sampled_riffle_length_m,Comments,...11))%>%
+  group_by(system)
+head(more_fish_sampling)
+```
+```{r}
+fish_sampling2_2A<-more_fish_sampling%>%
+  select(system,riffle,species)%>%
+  group_by(riffle)%>%
+  mutate(row=row_number())%>%
+  tidyr::pivot_wider(names_from = riffle,
+                     values_from = species)%>%
+  select(-row)
+print(fish_sampling2_2A)
+```
+**Tidying my data:**
+```{r}
+fish_sampling2_2B<-fish_sampling2_2A%>%
+  pivot_longer(cols = c(-system),
+               names_to = "riffle",
+               values_to = "species")
+print(fish_sampling2_2B)
+```
+## Task 2.3:
+I will be keeping the questions: how do populations of fish differ between Pepin Creek and Bertrand Creek and how does the length to weight ratio differ between species? Both questions incorporate important data that needs to be analyzed however, both questions approach the data differently which will make it more interesting to work with. 
+
+ *The version of the data set I want to use:*
+```{r}
+more_fish_sampling<-fish_sampling%>%
+  transform(weight_g=as.numeric(weight_g),length_cm=as.numeric(length_cm))%>%
+  mutate(length_weight_ratio=length_cm/weight_g)%>%
+  subset(select=-c(shocking_effort_s,sampled_riffle_length_m,Comments,...11))%>%
+  group_by(system)
+head(more_fish_sampling)
+```
+
+
+
+
