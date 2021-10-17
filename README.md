@@ -8,6 +8,7 @@
  | File | Description |
 | ---  | ---         |
 | `README.md`           | Project introduction & how-to instructions |
+| `fish_sampling.csv`   | The dataframe used during the analysis     |
 |`Milestone 1`          | Description data used during the project   |
 |`Milestone 2`          | Organization and visualization of data     |
 
