@@ -1,5 +1,5 @@
 ---
-title: "Milestone 2.md"
+title: "Milestone 2"
 author: "John Gray"
 output: md_document
 ---
@@ -92,7 +92,7 @@ fish_sampling
 # Task 2: Tidy the data
 
 ## Task 2.1:
- Based on the definition of "Tidy Data", I am under the impression that my data is "tidy". Each column, except for the "comments" column, is a variable, each row is one collected observation and each of the cells represent a value derived from the observation of a particular variable. 
+ Based on the definition of "Tidy Data", I am under the impression that my data is "tidy". Each column, except for the "comments" column, is a variable, each row is one collected observation and each of the cells represent a value derived from the observation of a particular variable. Therefore, the organization of my columns and rows, and the values contained within my cells aid in answering my research questions.
 
 **System** - is tidy. It represents a variable which describes system (i.e. Pepin Creek or Bertrand Creek) the sample was taken in.  Therefore, each row is an observation, as Pepin or Bertrand, within the column describes where the data was observed; collected. Each entry in this column is a value. 
 
