@@ -1,7 +1,7 @@
 ---
 title: "Milestone 1"
 author: "John Gray"
-output: pdf_document
+output: md_document
 ---
 ```{r,include=FALSE,echo = FALSE, results='hide'}
 library(datateachr)
