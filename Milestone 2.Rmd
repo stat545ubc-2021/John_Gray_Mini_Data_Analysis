@@ -1,5 +1,5 @@
 ---
-title: "Milestone 2.md"
+title: "Milestone 2"
 author: "John Gray"
 output: md_document
 ---
