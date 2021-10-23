@@ -22,7 +22,7 @@ fish_sampling<-read_csv("fish_sampling.csv")
 # Exercise 1: Special Data Types 
 ## Task 1: 
  I chose to alter a plot from my Milestone 1 of the Mini-Data-Analysis Project. The plot visually represents the length to weight ratio of fish species within both Bertrand Creek and Pepin Creek. The original plot, though slightly modified aesthetically, is seen below. 
-```{r,echo = FALSE}
+```{r}
 fish_sampling<-fish_sampling%>%
   transform(weight_g=as.numeric(weight_g),length_cm=as.numeric(length_cm))%>%
   mutate(length_weight_ratio=length_cm/weight_g)
@@ -60,21 +60,20 @@ fish_sampling
 My *research question* for Exercise 2 will be: "How does the length to weight ratio differ between species in Pepin Creek and Bertrand Creek?". Accordingly, the *variable of interest* (i.e. "Y") will be the length to weight ratio. 
 
 ## Exercise 2.1:
-In this exercise, I fit a model that provides insight into the differences in the length to weight ratio amongst different species of fish captured at Bertrand and Pepin Creek. 
-```{r}
-fit_fish_sampling<-lm(length_weight_ratio ~ species,data = fish_sampling)
-glance(fit_fish_sampling)
-
-summary(fit_fish_sampling)
-fit_fish_sampling$mean
-```
-
-## Exercise 2.2:
-In this exercise I used a one-way ANOVA to assess whether the length to weight ratio differed significantly among the fish species sampled. As can be seen below, it appears as though the the length to weight ratio is not uniform amongst the species sampled in Bertrand Creek and Pepin Creek. The null hypothesis states that all species sampled have a uniform length to weight ratio. However, the p-value is less than the alpha value of 0.05 therefore, I can reject my null hypothesis. 
+In this exercise I used a one-way ANOVA to assess whether the length to weight ratio differed significantly among the fish species sampled. I stored the output of the ANOVA as a variable.
 ```{r}
 one.way<-aov(length_weight_ratio ~ species,data = fish_sampling)
 summary(one.way)
 ```
+
+## Exercise 2.2:
+  
+  Using the 'broom' package, I analyzed the output of my ANOVA from exercise 2.1. As can be seen below, it appears as though the the length to weight ratio is not uniform amongst the species sampled in Bertrand Creek and Pepin Creek. The null hypothesis states that all species sampled have a uniform length to weight ratio. However, the p-value is less than the alpha value of 0.05 therefore, I can reject my null hypothesis. 
+```{r}
+tidy_one.way<-tidy(one.way)
+tidy_one.way
+```
+
 # Exercise 3: 
 
 ## Exercise 3.1:
@@ -85,5 +84,11 @@ species_abundance<-fish_sampling%>%
 species_abundance
 
 write.csv(species_abundance,here::here("ouput","Species_Abundance.csv"))
+```
+
+## Exercise 3.2:
+```{r}
+saveRDS(tidy_one.way,here::here("ouput","One_way_ANOVA.RDS"))
+readRDS(here::here("ouput","One_way_ANOVA.RDS"))
 ```
 

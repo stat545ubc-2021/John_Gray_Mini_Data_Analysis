@@ -18,11 +18,26 @@ Project. The plot visually represents the length to weight ratio of fish
 species within both Bertrand Creek and Pepin Creek. The original plot,
 though slightly modified aesthetically, is seen below.
 
+``` r
+fish_sampling<-fish_sampling%>%
+  transform(weight_g=as.numeric(weight_g),length_cm=as.numeric(length_cm))%>%
+  mutate(length_weight_ratio=length_cm/weight_g)
+```
+
     ## Warning in eval(substitute(list(...)), `_data`, parent.frame()): NAs introduced
     ## by coercion
 
     ## Warning in eval(substitute(list(...)), `_data`, parent.frame()): NAs introduced
     ## by coercion
+
+``` r
+fish_sampling%>%
+  ggplot(aes(species,length_weight_ratio))+
+  geom_jitter(alpha=0.4,width=0.3,aes(color=system))+
+  scale_y_log10()+
+  labs(y="Fish Length to Weight Ratio",x="Species", title = "The length to weight ratio of fish species within Bertrand Creek and Pepin Creek")+
+  scale_x_discrete(labels=c("CO"="Coho", "CRAYFISH"="Crayfish","CUT"="Cutthroat","RBT"="Steelhead", "LAMP"= "Lamprey","STK"="Stickleback","DAC"="Dace","TROUT"="Trout sp."))
+```
 
     ## Warning: Removed 191 rows containing missing values (geom_point).
 
@@ -8600,65 +8615,9 @@ weight ratio.
 
 ## Exercise 2.1:
 
-In this exercise, I fit a model that provides insight into the
-differences in the length to weight ratio amongst different species of
-fish captured at Bertrand and Pepin Creek.
-
-``` r
-fit_fish_sampling<-lm(length_weight_ratio ~ species,data = fish_sampling)
-glance(fit_fish_sampling)
-```
-
-    ## # A tibble: 1 × 12
-    ##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
-    ##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>  <dbl> <dbl> <dbl>
-    ## 1     0.171         0.163  5.65      22.3 5.40e-24     6 -2073. 4162. 4198.
-    ## # … with 3 more variables: deviance <dbl>, df.residual <int>, nobs <int>
-
-``` r
-summary(fit_fish_sampling)
-```
-
-    ## 
-    ## Call:
-    ## lm(formula = length_weight_ratio ~ species, data = fish_sampling)
-    ## 
-    ## Residuals:
-    ##    Min     1Q Median     3Q    Max 
-    ## -6.406 -1.540 -0.485  0.573 91.388 
-    ## 
-    ## Coefficients:
-    ##              Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)   2.52676    0.69595   3.631 0.000305 ***
-    ## speciesCUT   -0.52895    0.90798  -0.583 0.560393    
-    ## speciesDAC   -0.04225    0.84818  -0.050 0.960288    
-    ## speciesLAMP   6.08550    0.82067   7.415 3.79e-13 ***
-    ## speciesRBT    2.08898    1.01300   2.062 0.039587 *  
-    ## speciesSTK    2.68013    0.88814   3.018 0.002646 ** 
-    ## speciesTROUT  1.73238    1.24496   1.392 0.164543    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 5.654 on 652 degrees of freedom
-    ##   (191 observations deleted due to missingness)
-    ## Multiple R-squared:  0.1705, Adjusted R-squared:  0.1629 
-    ## F-statistic: 22.34 on 6 and 652 DF,  p-value: < 2.2e-16
-
-``` r
-fit_fish_sampling$mean
-```
-
-    ## NULL
-
-## Exercise 2.2:
-
 In this exercise I used a one-way ANOVA to assess whether the length to
-weight ratio differed significantly among the fish species sampled. As
-can be seen below, it appears as though the the length to weight ratio
-is not uniform amongst the species sampled in Bertrand Creek and Pepin
-Creek. The null hypothesis states that all species sampled have a
-uniform length to weight ratio. However, the p-value is less than the
-alpha value of 0.05 therefore, I can reject my null hypothesis.
+weight ratio differed significantly among the fish species sampled. I
+stored the output of the ANOVA as a variable.
 
 ``` r
 one.way<-aov(length_weight_ratio ~ species,data = fish_sampling)
@@ -8671,6 +8630,27 @@ summary(one.way)
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 191 observations deleted due to missingness
+
+## Exercise 2.2:
+
+Using the ‘broom’ package, I analyzed the output of my ANOVA from
+exercise 2.1. As can be seen below, it appears as though the the length
+to weight ratio is not uniform amongst the species sampled in Bertrand
+Creek and Pepin Creek. The null hypothesis states that all species
+sampled have a uniform length to weight ratio. However, the p-value is
+less than the alpha value of 0.05 therefore, I can reject my null
+hypothesis.
+
+``` r
+tidy_one.way<-tidy(one.way)
+tidy_one.way
+```
+
+    ## # A tibble: 2 × 6
+    ##   term         df  sumsq meansq statistic   p.value
+    ##   <chr>     <dbl>  <dbl>  <dbl>     <dbl>     <dbl>
+    ## 1 species       6  4286.  714.       22.3  5.40e-24
+    ## 2 Residuals   652 20843.   32.0      NA   NA
 
 # Exercise 3:
 
@@ -8706,3 +8686,16 @@ species_abundance
 ``` r
 write.csv(species_abundance,here::here("ouput","Species_Abundance.csv"))
 ```
+
+## Exercise 3.2:
+
+``` r
+saveRDS(tidy_one.way,here::here("ouput","One_way_ANOVA.RDS"))
+readRDS(here::here("ouput","One_way_ANOVA.RDS"))
+```
+
+    ## # A tibble: 2 × 6
+    ##   term         df  sumsq meansq statistic   p.value
+    ##   <chr>     <dbl>  <dbl>  <dbl>     <dbl>     <dbl>
+    ## 1 species       6  4286.  714.       22.3  5.40e-24
+    ## 2 Residuals   652 20843.   32.0      NA   NA
