@@ -1,0 +1,91 @@
+---
+title: "Milestone 3"
+author: "John Gray"
+output: github_document
+---
+```{r,include=FALSE,echo = FALSE, results='hide'}
+library(datateachr)
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(forcats)
+library(lubridate)
+library(tsibble)
+library(broom)
+fish_sampling<-read_csv("fish_sampling.csv")
+```
+Research Questions: 
+  1. How do populations of fish differ between Pepin Creek and Bertrand Creek?
+  2. How does the length to weight ratio differ between species in Pepin Creek and Bertrand Creek?
+
+# Exercise 1: Special Data Types 
+## Task 1: 
+ I chose to alter a plot from my Milestone 1 of the Mini-Data-Analysis Project. The plot visually represents the length to weight ratio of fish species within both Bertrand Creek and Pepin Creek. The original plot, though slightly modified aesthetically, is seen below. 
+```{r,echo = FALSE}
+fish_sampling<-fish_sampling%>%
+  transform(weight_g=as.numeric(weight_g),length_cm=as.numeric(length_cm))%>%
+  mutate(length_weight_ratio=length_cm/weight_g)
+
+fish_sampling%>%
+  ggplot(aes(species,length_weight_ratio))+
+  geom_jitter(alpha=0.4,width=0.3,aes(color=system))+
+  scale_y_log10()+
+  labs(y="Fish Length to Weight Ratio",x="Species", title = "The length to weight ratio of fish species within Bertrand Creek and Pepin Creek")+
+  scale_x_discrete(labels=c("CO"="Coho", "CRAYFISH"="Crayfish","CUT"="Cutthroat","RBT"="Steelhead", "LAMP"= "Lamprey","STK"="Stickleback","DAC"="Dace","TROUT"="Trout sp."))
+```
+I used the 'fct_reorder()' function of the 'forcats' package to reorder the above plot. I had the values along the x-axis reordered; the fish species, according to values on the y-axis; the length to weight ratio of the different species. I used this function as it orders the fish species along the axis based on their length to weight ratios in ascending order. While I could estimate the order in which the species should be ordered based on the above plot or values, it would not be as accurate. the 'fct_reorder()' function takes into account values such as outliers which would be difficult to account for when trying to organize the plot visually. Additionally, the use of this function is far more efficient then me spending the time to guess the order that fish species should be ordered along the x-axis based on the length tot weight ratio. 
+```{r}
+fish_sampling%>%
+  mutate(species = fct_reorder(species,length_weight_ratio,na.rm=TRUE))%>%
+  ggplot(aes(species,length_weight_ratio))+
+  geom_jitter(alpha=0.4,width=0.3,aes(color=system))+
+  scale_y_log10()+
+  labs(y="Fish Length to Weight Ratio",x="Species", title = "The length to weight ratio of fish species within Bertrand Creek and Pepin Creek")+
+  scale_x_discrete(labels=c("CO"="Coho", "CRAYFISH"="Crayfish","CUT"="Cutthroat","RBT"="Steelhead", "LAMP"= "Lamprey","STK"="Stickleback","DAC"="Dace","TROUT"="Trout sp."))
+```
+## Task 3:
+ In this task I modified the "Date" column of my dataframe "fish_sampling".
+```{r}
+fish_sampling%>%
+  mutate(Date=mdy(Date))%>%
+  mutate(Date=yearweek(Date))
+fish_sampling
+```
+ By modifying the date column of my data, I will be able to quickly assure that there is no date bias in my data. With several more field seasons left of my project, as I begin to amalgamate data, I need a date reference in which to compare fish abundance to. Part of my research involves changes in fish activity and the timing of activities such as spawning from year to year as a result of environmental changes. By organizing my date as year-week, I will be able to organize my data over the following field seasons according to "week" so as to compare fish activity accordingly. 
+ 
+# Exercise 2: 
+
+## Exercise 2.0:
+My *research question* for Exercise 2 will be: "How does the length to weight ratio differ between species in Pepin Creek and Bertrand Creek?". Accordingly, the *variable of interest* (i.e. "Y") will be the length to weight ratio. 
+
+## Exercise 2.1:
+In this exercise, I fit a model that provides insight into the differences in the length to weight ratio amongst different species of fish captured at Bertrand and Pepin Creek. 
+```{r}
+fit_fish_sampling<-lm(length_weight_ratio ~ species,data = fish_sampling)
+glance(fit_fish_sampling)
+
+summary(fit_fish_sampling)
+fit_fish_sampling$mean
+```
+
+## Exercise 2.2:
+In this exercise I used a one-way ANOVA to assess whether the length to weight ratio differed significantly among the fish species sampled. As can be seen below, it appears as though the the length to weight ratio is not uniform amongst the species sampled in Bertrand Creek and Pepin Creek. The null hypothesis states that all species sampled have a uniform length to weight ratio. However, the p-value is less than the alpha value of 0.05 therefore, I can reject my null hypothesis. 
+```{r}
+one.way<-aov(length_weight_ratio ~ species,data = fish_sampling)
+summary(one.way)
+```
+# Exercise 3: 
+
+## Exercise 3.1:
+```{r}
+species_abundance<-fish_sampling%>%
+  group_by(system,species)%>%
+  tally()
+species_abundance
+
+here::here("output")
+
+write.csv(species_abundance,here::here("ouput","Species_Abundance.csv"))
+```
+
