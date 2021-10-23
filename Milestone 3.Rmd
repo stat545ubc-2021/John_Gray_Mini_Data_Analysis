@@ -15,7 +15,7 @@ library(tsibble)
 library(broom)
 fish_sampling<-read_csv("fish_sampling.csv")
 ```
-Research Questions: 
+## Research Questions:
   1. How do populations of fish differ between Pepin Creek and Bertrand Creek?
   2. How does the length to weight ratio differ between species in Pepin Creek and Bertrand Creek?
 
@@ -83,8 +83,6 @@ species_abundance<-fish_sampling%>%
   group_by(system,species)%>%
   tally()
 species_abundance
-
-here::here("output")
 
 write.csv(species_abundance,here::here("ouput","Species_Abundance.csv"))
 ```
