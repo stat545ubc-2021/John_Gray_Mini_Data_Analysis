@@ -14,7 +14,7 @@
 |`Milestone 3`          | Data manipulation and an introductory modeling|
 
 ## How to run this project
- This project can be run by following the link: https://github.com/stat545ubc-2021/John_Gray_Mini_Data_Analysis.git . This will allow those interested to engage with this project provided that they have R installed on their computer. 
+ This project can be run by following the link: https://github.com/stat545ubc-2021/John_Gray_Mini_Data_Analysis.git or in R gh repo clone stat545ubc-2021/John_Gray_Mini_Data_Analysis. This will allow those interested to engage with this project provided that they have R installed on their computer. 
 
 
 ## Authors
