@@ -1,0 +1,109 @@
+---
+title: "Milestone 1"
+author: "John Gray"
+output: md_document
+---
+```{r,include=FALSE,echo = FALSE, results='hide'}
+library(datateachr)
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(readr)
+fish_sampling<-read_csv("fish_sampling.csv")
+```
+
+
+# Task 1: Choose your favourite dataset
+  1. vancouver_trees
+  2. flow_sample
+  3. cancer_sample
+  4. building_permits
+ 
+## Narrowing down my selection:
+  **1. 'vancouver_trees'**
+```{r}
+summarise(vancouver_trees)
+select(vancouver_trees, everything())
+class(vancouver_trees)
+dim(vancouver_trees)
+```
+
+  **2. 'flow_sample'**
+```{r}
+summarise(flow_sample)
+select(flow_sample, everything())
+class(flow_sample)
+dim(flow_sample)
+```
+
+  **3. 'cancer_sample'**
+```{r}
+summarise(cancer_sample)
+select(cancer_sample, everything())
+class(cancer_sample)
+dim(flow_sample)
+```
+
+  **4. 'building_permits'**
+```{r}
+summarise(building_permits)
+select(building_permits, everything())
+class(building_permits)
+dim(building_permits)
+```
+
+  **5. 'fish_sampling'**
+```{r}
+summarise(fish_sampling)
+select(fish_sampling, everything())
+class(fish_sampling)
+dim(fish_sampling)
+```
+
+## My selection:
+  Selecting from the provided dataframes, 'flow_sample' and 'vancouver_trees', I found to be the most interesting and motivating to work with. I am interested in both however, I noticed that 'flow_sample' lacked a lot some "data-diversity" that could be applicable to future situations. Given the option I would have chosen to work with 'vanocuver-trees' as I preferred the diversity in data that it offered. However, I would like to try and use a portion of my collected data from my previous field season: 'fish_sampling'. My dataset includes fish sampling data from a fish salvage project in two Fraser Valley systems; Bertrand Creek and Pepin Creek. Sampling occurred at "riffles" and so sampling within each system is further broken down by sampling location (i.e.riffle). Each of the collected fish were weighed and measured. I believe that this dataset may provide enough complexity to be included within this mini-analysis while providing me with experience with working with a dataset of my own.  
+
+# Task 2: Exploring my dataset
+  **1. Plot the abundance of fish in Bertrand Creek**
+    - This below figure demonstrates the relative abundance of each of the collected fish species from Bertrand Creek. I found this exercise to be relevant as it demonstrates the degree to which species abundance differs within a system. Additionally, such figures are easily compared between systems.  
+   
+```{r}
+fish_sampling%>%
+  filter(system=="Bertrand")%>%
+  ggplot(aes(species))+
+  geom_bar(aes(fill=species))
+```
+
+  **2. Explore the length:weight relationship in Nooksack Dace (*Rhinichthys cataractae*) (DAC)** 
+    - Assessing the length:weight relationship can act as an indicator of fish health and age diversity. This figure, as seen below, demonstrates this length:weight ratio of Nooksack Dace in both sampled systems; Pepin Creek and Bertrand Creek, and highlights the lack of size diversity in Pepin Creek.
+```{r}
+fish_sampling%>%
+  filter(species=="DAC")%>%
+  ggplot(aes(weight_g,length_cm))+
+  geom_jitter(aes(color=system),alpha=0.8)
+```
+
+  **3. Filter observations in my data according to some criteria.**
+    - Nooksack Dace (*Rhinichthys cataractae*)(i.e. DAC) are an endangered species of minnow. Research is being conducted to observe their abundnance within different stream systems to analyze aspects of their ecology that are not well understood. Therefore, assessing their localized abundance is hugely important. With the knowledge of population differences between systems, research can be focused within theses systems to determine the cause of these population differences as when working with an endagered species, each individual matters. 
+```{r}
+DAC_abundance_betrand<-fish_sampling%>%
+  filter(species=="DAC", system=="Bertrand")%>%
+  group_by(riffle)
+DAC_abundance_pepin<-fish_sampling%>%
+  filter(species=="DAC", system=="Pepin")%>%
+  group_by(riffle)
+```
+
+  **4. Make a new tibble with a subset of the data I am interested in.**  
+    - As stated previously in "Excersie 3", the abundance of the endangered Nooksack Dace is of huge importance. Thus, the establishment of tibbles with the localized abundance of dace makes working with and analyzing the data easier and more efficient. 
+```{r}
+as_tibble(DAC_abundance_betrand)
+as_tibble(DAC_abundance_pepin)
+```
+
+# Task 3:Write your research questions
+  1. How do populations of fish differ between Pepin Creek and Bertrand Creek?
+  2. How does the weight of the fish differ between Pepin Creek and Bertrand Creek?
+  3. How does the length to weight ratio differ between species?
+  4. Is there a difference in fish abundnance between riffles (i.e. sampling sites)?
+ 
