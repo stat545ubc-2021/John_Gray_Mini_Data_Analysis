@@ -161,18 +161,17 @@ fish_sampling%>%
 ![](Milestone-3_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 I used the ‘fct\_reorder()’ function of the ‘forcats’ package to reorder
-the above plot. I had the values along the x-axis reordered; the fish
-species, according to values on the y-axis; the length to weight ratio
-of the different species. I used this function as it orders the fish
-species along the axis based on their length to weight ratios in
-ascending order. While I could estimate the order in which the species
-should be ordered based on the above plot or values, it would not be as
-accurate. the ‘fct\_reorder()’ function takes into account values such
-as outliers which would be difficult to account for when trying to
-organize the plot visually. Additionally, the use of this function is
-far more efficient then me spending the time to guess the order that
-fish species should be ordered along the x-axis based on the length tot
-weight ratio.
+the above plot. I had the values along the x-axis reordered (i.e. the
+fish species), according to values on the y-axis (i.e. the length to
+weight ratio). I used this function as it orders the fish species along
+the axis based on their length to weight ratios in ascending order.
+While I could estimate the order in which the species should be ordered
+based on the above plot or values, it would not be as accurate. the
+‘fct\_reorder()’ function takes into account values such as outliers
+which would be difficult to account for when trying to organize the plot
+visually. Additionally, the use of this function is far more efficient
+then me spending the time to guess the order that fish species should be
+ordered along the x-axis based on the length tot weight ratio.
 
 ``` r
 fish_sampling%>%
